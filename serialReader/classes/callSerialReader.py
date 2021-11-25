@@ -27,7 +27,7 @@ class serialReaderUI(QMainWindow):
         self.ui.pushButtonSaveData.clicked.connect(self.saveData)
         
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(500)
+        self.timer.setInterval(1000)
         self.timer.timeout.connect(self.updateData)
         
 
@@ -38,11 +38,13 @@ class serialReaderUI(QMainWindow):
         self.curve = self.ui.mplWidget.plot(self.t, self.signal)
         self.ui.mplWidget.setLabels(bottom='Time (s)', left='Signal', right='Signal')
 
-        self.ui.lineEditPort.setText('COM3')
+        #self.ui.lineEditPort.setText('COM3')
         self.ui.comboBoxBaudRate.setCurrentIndex(9)
 
         self.ui.comboBoxPort.addItems(self.serial_ports())
         self.ui.comboBoxPort.currentIndexChanged.connect(self.displayPort)
+        
+        
 
         self.show()
 
@@ -59,22 +61,35 @@ class serialReaderUI(QMainWindow):
         self.t = []
         self.port = self.ui.lineEditPort.text()
         self.baudRate = int(self.ui.comboBoxBaudRate.itemText(self.ui.comboBoxBaudRate.currentIndex()))
+        
+        self.ser =serial.Serial(self.port, self.baudRate)
 
-        print(self.serial_ports())
+        #print(self.serial_ports())
         self.timer.start()
 
 
     def continueAcquisition(self):
+        self.ser =serial.Serial(self.port, self.baudRate)
         self.timer.start()
 
     def updateData(self):
         self.t.append(time.time()-self.t0)
-        self.signal.append(random.random())
+        #self.signal.append(random.random())
+        
+        
+        line2 = self.ser.readline()
+        string = line2.decode()
+        stripped_string = string.strip()
+        num = float(stripped_string)
+        self.signal.append(num)
+        
         self.curve.setData(self.t, self.signal)
         self.ui.labelSignal.setNum(self.signal[-1])
 
     def stopAcquisition(self):
-        self.timer.stop()            
+        self.timer.stop()
+        self.ser.close()
+                
         
 
     def closeGUI(self):
@@ -113,7 +128,7 @@ class serialReaderUI(QMainWindow):
             raise EnvironmentError('Unsupported platform')
 
         result = []
-        print(ports)
+        #print(ports)
         for port in ports:
             try:
                 s = serial.Serial(port)
