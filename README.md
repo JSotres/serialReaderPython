@@ -2,11 +2,11 @@
 
 Simple GUI, created with pyqt5, to read data from a serial port.
 
-We basically use it for Arduino
+We basically use it to read data from Arduino
 
 Work in progress... Feel free to use it if useful
 
-## Qucik Start
+## Quick Start
 
 ### Create a virtual environment
 
