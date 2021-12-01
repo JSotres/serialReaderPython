@@ -73,7 +73,6 @@ class serialReaderUI(QMainWindow):
         self.timer.start()
 
     def updateData(self):
-        self.t.append(time.time()-self.t0)
         #self.signal.append(random.random())
 
         self.ser.flushInput()
@@ -83,10 +82,12 @@ class serialReaderUI(QMainWindow):
         string = line2.decode()
         stripped_string = string.strip()
         num = float(stripped_string)
-        self.signal.append(num)
-        
-        self.curve.setData(self.t, self.signal)
-        self.ui.labelSignal.setNum(self.signal[-1])
+
+        if math.isinf(num) == False:
+            self.t.append(time.time()-self.t0)
+            self.signal.append(num)
+            self.curve.setData(self.t, self.signal)
+            self.ui.labelSignal.setNum(self.signal[-1])
 
     def stopAcquisition(self):
         self.timer.stop()
