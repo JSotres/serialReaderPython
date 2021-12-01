@@ -75,6 +75,8 @@ class serialReaderUI(QMainWindow):
     def updateData(self):
         self.t.append(time.time()-self.t0)
         #self.signal.append(random.random())
+
+        self.ser.flushInput()
         
         
         line2 = self.ser.readline()
@@ -127,8 +129,8 @@ class serialReaderUI(QMainWindow):
         else:
             raise EnvironmentError('Unsupported platform')
 
-        result = []
-        #print(ports)
+        result = ['Select Port']
+
         for port in ports:
             try:
                 s = serial.Serial(port)
